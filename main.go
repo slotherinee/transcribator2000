@@ -13,7 +13,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	"gopkg.in/tucnak/telebot.v2"
 )
 
@@ -22,10 +22,10 @@ type TranscriptionResponse struct {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Ошибка загрузки .env файла")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Ошибка загрузки .env файла")
+	// }
 
 	telegramToken := os.Getenv("TELEGRAM_TOKEN")
 	hfToken := os.Getenv("HF_TOKEN")
