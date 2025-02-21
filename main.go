@@ -13,7 +13,6 @@ import (
 	"os"
 	"strings"
 
-	// "github.com/joho/godotenv"
 	"gopkg.in/tucnak/telebot.v2"
 )
 
@@ -22,10 +21,6 @@ type TranscriptionResponse struct {
 }
 
 func main() {
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Fatal("Ошибка загрузки .env файла")
-	// }
 
 	telegramToken := os.Getenv("TELEGRAM_TOKEN")
 	hfToken := os.Getenv("HF_TOKEN")
@@ -42,29 +37,32 @@ func main() {
 	log.Println("🚀 Bot started successfully!")
 
 	bot.Handle("/start", func(m *telebot.Message) {
-		bot.Send(m.Sender, "Hello, I am a transcribator3000")
+		bot.Send(m.Chat, "Hello, I am a transcribator3000")
 	})
 
 	bot.Handle(telebot.OnVoice, func(m *telebot.Message) {
+		chat := m.Chat
+
 		fileURL, err := bot.FileURLByID(m.Voice.FileID)
 		if err != nil {
-			bot.Send(m.Sender, "Error getting file link")
+			bot.Send(chat, "Error getting file link")
 			return
 		}
 
 		filePath, err := downloadFile(fileURL)
 		if err != nil {
-			bot.Send(m.Sender, "Error downloading file")
+			bot.Send(chat, "Error downloading file")
 			return
 		}
 		defer os.Remove(filePath)
 
 		transcription, err := transcribeAudio(filePath, hfToken)
 		if err != nil {
-			bot.Send(m.Sender, "Error processing transcription")
+			bot.Send(chat, "Error processing transcription")
 			return
 		}
-		bot.Send(m.Sender, transcription, &telebot.SendOptions{ReplyTo: m})
+
+		bot.Send(chat, transcription, &telebot.SendOptions{ReplyTo: m})
 	})
 
 	bot.Start()
